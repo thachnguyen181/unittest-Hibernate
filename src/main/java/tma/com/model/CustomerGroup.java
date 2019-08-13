@@ -31,6 +31,10 @@ public class CustomerGroup implements Serializable{
 	private Set<Customer> customers = new HashSet<Customer>();
 	
 	public CustomerGroup() {}
+	
+	public CustomerGroup(String name) {
+		this.name = name;
+	}
 
 	public CustomerGroup(int id, String name, Set<Customer> customers) {
 		super();

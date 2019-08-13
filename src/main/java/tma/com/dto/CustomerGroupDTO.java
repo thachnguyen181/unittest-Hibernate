@@ -7,6 +7,10 @@ public class CustomerGroupDTO {
 	
 	public CustomerGroupDTO() {}
 
+	public CustomerGroupDTO(String name) {
+		this.name = name;
+	}
+	
 	public CustomerGroupDTO(int id, String name) {
 		super();
 		this.id = id;
