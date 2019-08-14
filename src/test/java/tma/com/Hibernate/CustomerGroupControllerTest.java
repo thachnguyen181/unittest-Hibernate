@@ -36,11 +36,11 @@ public class CustomerGroupControllerTest {
 	
 	@Test
 	public void getCustomerGroupByName() throws Exception {
-		Mockito.when(customerGroupService.getByName(Mockito.anyString())).thenReturn(new CustomerGroupDTO("test1"));
+		Mockito.when(customerGroupService.getByName(Mockito.anyString())).thenReturn(new CustomerGroupDTO("test"));
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/customergroups").accept(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		System.out.println(result.getResponse());
-		JSONAssert.assertEquals("{id:9, name:test1}", result.getResponse().getContentAsString(), false);
+		JSONAssert.assertEquals("{id:8, name:test}", result.getResponse().getContentAsString(), false);
 	}
 	
 	@Test
@@ -48,18 +48,16 @@ public class CustomerGroupControllerTest {
 		CustomerGroup mockCustomerGroup = new CustomerGroup();
 		CustomerGroupDTO customerGroupDto = new CustomerGroupDTO();
 		customerGroupDto.setName(Mockito.anyString());
-		Mockito.when(CustomerGroupService.insert(any(CustomerGroup.class))).thenReturn(mockCustomerGroup);
+		//Mockito.when(CustomerGroupService.insert(customerGroupDto)).thenReturn(mockCustomerGroup);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(
-				"/students/Student1/courses/Course1").accept(
+				"/customergroups").accept(
 				MediaType.APPLICATION_JSON);
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		System.out.println(result.getResponse());
-		String expected = "{id:Course1,name:Spring,description:10 Steps}";
-
-		// {"id":"Course1","name":"Spring","description":"10 Steps, 25 Examples and 10K Students","steps":["Learn Maven","Import Project","First Example","Second Example"]}
+		String expected = "{id:9, name:test1}";
 
 		JSONAssert.assertEquals(expected, result.getResponse()
 				.getContentAsString(), false);

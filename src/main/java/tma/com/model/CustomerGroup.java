@@ -35,6 +35,11 @@ public class CustomerGroup implements Serializable{
 	public CustomerGroup(String name) {
 		this.name = name;
 	}
+	
+	public CustomerGroup(int id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 
 	public CustomerGroup(int id, String name, Set<Customer> customers) {
 		super();
