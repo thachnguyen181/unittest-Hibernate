@@ -6,9 +6,11 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import tma.com.controller.CustomerGroupController;
 import tma.com.dto.CustomerGroupDTO;
@@ -16,6 +18,7 @@ import tma.com.model.CustomerGroup;
 import tma.com.repository.ICustomerGroupRepository;
 import tma.com.service.CustomerGroupService;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MokitoServiceTest {
 	
 	@InjectMocks
