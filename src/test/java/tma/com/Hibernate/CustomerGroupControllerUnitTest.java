@@ -1,5 +1,6 @@
 package tma.com.Hibernate;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.doNothing;
@@ -7,8 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -21,12 +22,13 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import tma.com.controller.CustomerGroupController;
@@ -34,6 +36,7 @@ import tma.com.dto.CustomerGroupDTO;
 import tma.com.model.CustomerGroup;
 import tma.com.service.CustomerGroupService;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CustomerGroupControllerUnitTest {
 
 	private MockMvc mockMvc;
@@ -43,11 +46,16 @@ public class CustomerGroupControllerUnitTest {
 
 	@InjectMocks
 	private CustomerGroupController customerGroupController;
+	
+	private String getAllUrl = "/customergroups";
 
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
-		mockMvc = MockMvcBuilders.standaloneSetup(customerGroupController).addFilters(new CORSFilter()).build();
+		mockMvc = MockMvcBuilders.standaloneSetup(customerGroupController)
+                .addPlaceholderValue("/customergroups", getAllUrl)
+                .build();
+		//mockMvc = MockMvcBuilders.standaloneSetup(customerGroupController).addFilters(new CORSFilter()).build();
 	}
 
 	@Test
@@ -59,13 +67,14 @@ public class CustomerGroupControllerUnitTest {
 		
 		when(customerGroupService.getAll()).thenReturn(customerGroups);
 		
-		mockMvc.perform(get("/customergroups"))
+		mockMvc.perform(get(getAllUrl))
 			.andExpect(status().isOk())
-			.andExpect((ResultMatcher) content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-			//.andExpect((ResultMatcher) jsonPath("$", hasSize(3)))
-            .andExpect((ResultMatcher) jsonPath("$[0].name", is("bronze")))
-            .andExpect((ResultMatcher) jsonPath("$[1].name", is("silver")))
-            .andExpect((ResultMatcher) jsonPath("$[2].name", is("gold")));
+			.andExpect(jsonPath("$", hasSize(3)));
+//			.andExpect((ResultMatcher) content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+//			.andExpect((ResultMatcher) jsonPath("$", hasSize(3)))
+//            .andExpect((ResultMatcher) jsonPath("$[0].name", is("bronze")))
+//            .andExpect((ResultMatcher) jsonPath("$[1].name", is("silver")))
+//            .andExpect((ResultMatcher) jsonPath("$[2].name", is("gold")));
 		
 		verify(customerGroupService, times(1)).getAll();
 		verifyNoMoreInteractions(customerGroupService);
@@ -73,15 +82,15 @@ public class CustomerGroupControllerUnitTest {
 	
 	@Test
 	public void test_get_by_id_success() throws Exception {
-		CustomerGroup customerGroup = new CustomerGroup(1, "bronze");
+		CustomerGroup customerGroup = new CustomerGroup("bronze");
 		
-		when(customerGroupService.getById(1)).thenReturn(customerGroup);
+		when(customerGroupService.getById(9)).thenReturn(customerGroup);
 		
-		mockMvc.perform(get("/customergroups/{id}", 1))
+		mockMvc.perform(get("/customergroups/{id}", 9))
 			.andExpect(status().isOk())
-			.andExpect((ResultMatcher) content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-			.andExpect((ResultMatcher) jsonPath("$.id", is(1)))
-			.andExpect((ResultMatcher) jsonPath("$.name", is("bronze")));
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+			//.andExpect((ResultMatcher) jsonPath("$.id", is(9)))
+			.andExpect(jsonPath("$.name", is("bronze")));
 		
 		verify(customerGroupService, times(1)).getById(1);
         verifyNoMoreInteractions(customerGroupService);
@@ -122,7 +131,7 @@ public class CustomerGroupControllerUnitTest {
 	
 	@Test
 	public void test_delete_customer_group_success() throws Exception {
-	    CustomerGroup customerGroup = new CustomerGroup(4, "TamNT");
+	    CustomerGroup customerGroup = new CustomerGroup("TamNT");
 	    when(customerGroupService.getById(customerGroup.getId())).thenReturn(customerGroup);
 	    doNothing().when(customerGroupService).delete(customerGroup.getId());
 	    mockMvc.perform(

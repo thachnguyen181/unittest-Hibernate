@@ -2,6 +2,8 @@ package tma.com.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +23,14 @@ import tma.com.service.ICustomerGroupService;
 @RestController
 public class CustomerGroupController {
 	
+	 private final Logger LOG = LoggerFactory.getLogger(CustomerGroupController.class);
+	
 	@Autowired
 	private ICustomerGroupService customerGroupService;
 	
 	@GetMapping(value = "/customergroups")
 	public ResponseEntity<List<CustomerGroupDTO>> getAll() {
+		//LOG.info("no candidates found");
 		return new ResponseEntity<List<CustomerGroupDTO>>(customerGroupService.getAll(), HttpStatus.OK); 
 	}
 	
